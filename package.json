@@ -1,12 +1,12 @@
 {
-  "name": "nypl-streams-client",
+  "name": "@nypl/nypl-streams-client",
   "version": "0.1.0",
   "description": "Internal NYPL client for reading/writing avro encoded streams",
   "main": "index.js",
   "scripts": {
     "test": "standard && mocha"
   },
-  "author": "",
+  "author": "@nonword",
   "license": "ISC",
   "dependencies": {
     "@nypl/nypl-data-api-client": "^0.1.1",

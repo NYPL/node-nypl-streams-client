@@ -6,7 +6,7 @@ const Client = require('../index')
 describe('Client', function () {
   this.timeout(30000)
 
-  describe.only('Stream write', function () {
+  describe('Stream write', function () {
     var streamName = 'IndexDocumentProcessed'
     streamName = 'node-nypl-streams-client-test-14948860293950.8801324877422303'
 
@@ -39,7 +39,7 @@ describe('Client', function () {
       })
     })
 
-    it.only('should write multiple records, respecting rate limit', function () {
+    it('should write multiple records, respecting rate limit', function () {
       var recordsPerSecond = 100
       var client = new Client({ nyplDataApiClientBase: 'https://api.nypltech.org/api/v0.1/', recordsPerSecond })
 

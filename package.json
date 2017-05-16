@@ -9,7 +9,7 @@
   "author": "@nonword",
   "license": "ISC",
   "dependencies": {
-    "@nypl/nypl-data-api-client": "^0.1.1",
+    "@nypl/nypl-data-api-client": "^0.1.2",
     "avsc": "^5.0.2",
     "aws-sdk": "^2.50.0",
     "loglevel": "^1.4.1"

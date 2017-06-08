@@ -23,6 +23,7 @@ Client options include:
  - **recordsPerSecond**: Max records to write to stream in a given second through any means. AWS max is 1000. Default 500
  - **waitBetweenDescribeCallsInSeconds**: Delay to insert between successive Describe calls (i.e. when checking stream availability. Default 4
  - **maxDescribeCallRetries**: Maximum number of Describe calls to make before failing. Default 10
+ - **awsRegion**: AWS region that your kinesis streams are located in. Default 'us-east-1'
  - **logLevel**: Set [log level](https://github.com/pimterry/loglevel) (i.e. info, error, warn, debug). Default env.LOG_LEVEL or 'error'
 
 ### streamsClient.write (streamName, data, opts)

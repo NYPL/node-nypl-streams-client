@@ -57,7 +57,7 @@ streamsClient.write('MyStream', records, options).then((resp) => {
 
 Above will resolve after `records.length / 500` seconds. The resolved value is a hash merged from the hashes returned from each putRecords call.
 
-### streamsClient.decodeRecords (schemaName, data)
+### streamsClient.decodeData (schemaName, data)
 
 A convenience function for decoding data received from a Kinesis stream (e.g. via a lambda event). Returns a Promise that resolves the record (or array of records) decoded.
 
@@ -74,7 +74,7 @@ exports.handler = function (event, context, callback) {
   if (!streamsClient) streamsClient = new NyplStreamsClient({ nyplDataApiClientBase: 'http://example.com/api/v0.1/' })
 
   if (record.kinesis) {
-    var decodedData = streamsClient.decodeRecords('MySchema', event.Records)
+    var decodedData = streamsClient.decodeData('MySchema', event.Records)
     // Do something with the array of decoded records...
   }
 }

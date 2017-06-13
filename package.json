@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "unit-test": "./node_modules/.bin/mocha --reporter spec",
-    "test": "standard && mocha"
+    "test": "standard && npm run unit-test"
   },
   "author": "@nonword",
   "license": "ISC",
@@ -17,9 +17,9 @@
     "minimist": "^1.2.0"
   },
   "devDependencies": {
-    "chai": "^4.0.2",
-    "chai-as-promised": "^7.0.0",
-    "mocha": "^3.2.0"
+    "chai": "4.0.2",
+    "chai-as-promised": "7.0.0",
+    "mocha": "3.2.0"
   },
   "directories": {
     "test": "test"

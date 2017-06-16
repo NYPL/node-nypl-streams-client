@@ -75,7 +75,7 @@ exports.handler = function (event, context, callback) {
   const record = event.Records[0]
 
   if (record.kinesis) {
-    const decodedKinesisData = streamsClient.decodeData(schema, event.Records.map(record => record.kinesis.data));
+    const decodedKinesisData = streamsClient.decodeData('SchemaName', event.Records.map(record => record.kinesis.data));
 
     // Resolve the Promise and do something with the decoded data
     return decodedKinesisData

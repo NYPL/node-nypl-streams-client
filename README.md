@@ -57,6 +57,57 @@ streamsClient.write('MyStream', records, options).then((resp) => {
 
 Above will resolve after `records.length / 500` seconds. The resolved value is a hash merged from the hashes returned from each putRecords call.
 
+
+### streamsClient.decodeData (schemaName, data)
+
+A convenience function for decoding data received from a Kinesis stream (e.g. via a lambda event). Returns a Promise that resolves the record (or array of records) decoded.
+
+Params:
+ - **schemaName**: String name of schema the data is encoded in.
+ - **data**: An object (or array of objects) to decode.
+
+Example lambda handler with a kinesis trigger:
+
+```js
+exports.handler = function (event, context, callback) {
+  // Initialize streams client:
+  const streamsClient = new NyplStreamsClient({ nyplDataApiClientBase: 'http://example.com/api/v0.1/' })
+  const record = event.Records[0]
+
+  if (record.kinesis) {
+    const decodedKinesisData = streamsClient.decodeData('SchemaName', event.Records.map(record => record.kinesis.data));
+
+    // Resolve the Promise and do something with the decoded data
+    return decodedKinesisData
+      .then((result) => console.log('result:', result))
+      .catch((err) => console.log('rejected:', err));
+  }
+}
+```
+
+### streamsClient.decodeAvroBufferString (bufferString, avroObject, encodeType = 'base64')
+
+A convenience function for returning a decoded Avro Object from a given encoded Buffer
+
+Params:
+ - **bufferString** - String representing encoded buffer.
+ - **avroObject** - Avro Object containing `fromBuffer` method used to decode the bufferString.
+ - **encodeType** - String representing type of encoding, defaults to `base64`. (optional)
+
+Example:
+
+```js
+  const avsc = require('avsc')
+  // Initialize streams client:
+  const streamsClient = new NyplStreamsClient({ nyplDataApiClientBase: 'http://example.com/api/v0.1/' })
+  // Using the npm avsc module
+  const avroType = avsc.parse(JSON.parse(schema))
+  // Encoded buffer string
+  const bufferString = 'AEg5MzA4ZDMxMi0zZWQ0LTQ2ZjEtOWJiNS1iN'
+  // Result of decoded buffer string
+  const decodedBuffer = NyplStreamsClient.decodeAvroBufferString(bufferString, avroType)
+```
+
 ## Testing
 
 ```js

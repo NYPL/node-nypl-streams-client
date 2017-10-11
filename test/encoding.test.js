@@ -1,13 +1,25 @@
-/* global describe it */
+/* global describe it before after */
 
+const AWS = require('aws-sdk-mock')
 const assert = require('assert')
 const Client = require('../index')
 
 describe('Client', function () {
-  this.timeout(30000)
-
   describe('Stream encoding', function () {
-    var streamName = 'node-nypl-streams-client-test-14948860293950.8801324877422303'
+    before(() => {
+      // Mock AWS.Kinesis.prototype.putRecords
+      AWS.mock('Kinesis', 'putRecords', function (params, callback) {
+        callback(null, 'All records have totally been put')
+      })
+      // Mock AWS.Kinesis.prototype.putRecord (singular)
+      AWS.mock('Kinesis', 'putRecord', function (params, callback) {
+        callback(null, 'That record, it is now put')
+      })
+    })
+
+    after(() => {
+      AWS.restore('Kinesis')
+    })
 
     it('should fail if single record fails to encode', function () {
       var client = new Client({ nyplDataApiClientBase: 'https://api.nypltech.org/api/v0.1/' })
@@ -17,7 +29,7 @@ describe('Client', function () {
         nyplSourceInvalidProp: 'sierra-nypl',
         nyplType: 'bib'
       }
-      return client.write(streamName, data, { avroSchemaName: 'IndexDocumentProcessed' }).then((resp) => {
+      return client.write('fake-stream-name', data, { avroSchemaName: 'IndexDocumentProcessed' }).then((resp) => {
         // By virtue of resolving, we know it didn't fail as it should
         assert(false)
       }).catch((e) => {
@@ -40,7 +52,7 @@ describe('Client', function () {
       // Delete a property from fourth record:
       delete multiple[3].nyplType
 
-      return client.write(streamName, multiple, { avroSchemaName: 'IndexDocumentProcessed' }).then((resp) => {
+      return client.write('fake-stream-name', multiple, { avroSchemaName: 'IndexDocumentProcessed' }).then((resp) => {
         // By virtue of resolving, we know it didn't fail as it should
         assert(false)
       }).catch((e) => {

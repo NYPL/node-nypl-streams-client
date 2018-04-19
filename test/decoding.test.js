@@ -92,7 +92,7 @@ describe('Client', function () {
     it('should fail if the schema is not valid', () => {
       const incorrectSchema = 'IndexLaLaLa'
       const decodedData = client.decodeData(incorrectSchema, singleRecord.Records[0].kinesis.data)
-      expect(decodedData).to.be.rejected
+      expect(decodedData).to.be.rejectedWith(Error)
     })
 
     it('should fail if the encoded string does NOT match the Schema', () => {

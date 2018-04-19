@@ -20,7 +20,7 @@ describe('Client', function () {
           // Let's always respond to createStream requests for this stream name
           // as though it already exists (i.e. throw error like aws-sdk does)
           case 'fake-stream-name-that-exists':
-            callback('oh no!')
+            callback(new Error('oh no!'))
             break
         }
       })

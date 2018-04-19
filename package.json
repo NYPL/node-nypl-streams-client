@@ -1,15 +1,16 @@
 {
   "name": "@nypl/nypl-streams-client",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Internal NYPL client for reading/writing avro encoded streams",
   "main": "index.js",
   "scripts": {
-    "test": "standard && mocha"
+    "unit-test": "./node_modules/.bin/mocha --reporter spec",
+    "test": "standard && npm run unit-test"
   },
   "author": "@nonword",
   "license": "ISC",
   "dependencies": {
-    "@nypl/nypl-data-api-client": "^0.2.5",
+    "@nypl/nypl-data-api-client": "^1.0.0",
     "avsc": "^5.0.2",
     "aws-sdk": "^2.50.0",
     "loglevel": "^1.4.1",
@@ -17,6 +18,8 @@
   },
   "devDependencies": {
     "aws-sdk-mock": "^1.7.0",
+    "chai": "4.0.2",
+    "chai-as-promised": "7.0.0",
     "mocha": "^3.2.0",
     "sinon": "^4.0.1"
   },

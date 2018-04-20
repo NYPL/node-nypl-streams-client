@@ -1,16 +1,25 @@
-/* global describe it */
 const chai = require('chai')
 const assert = chai.assert
 const expect = chai.expect
 const chaiAsPromised = require('chai-as-promised')
+
+const fixtures = require('./fixtures')
 const Client = require('../index')
 chai.use(chaiAsPromised)
 
 describe('Client', function () {
   this.timeout(30000)
 
+  before(function () {
+    fixtures.enableFixtures()
+  })
+
+  after(function () {
+    fixtures.disableFixtures()
+  })
+
   describe('Stream Client Decoding from Schema', () => {
-    const client = new Client({ nyplDataApiClientBase: 'https://api.nypltech.org/api/v0.1/' })
+    const client = new Client()
     const singleRecord = {
       'Records': [
         {

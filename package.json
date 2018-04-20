@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "unit-test": "./node_modules/.bin/mocha --reporter spec",
-    "test": "./node_modules/.bin/standard && npm run unit-test",
+    "test": "./node_modules/.bin/standard --env mocha && npm run unit-test",
     "build-jsdoc": "./node_modules/.bin/jsdoc2md lib/client.js > docs/usage.md"
   },
   "author": "@nonword",
@@ -22,6 +22,7 @@
     "chai": "4.0.2",
     "chai-as-promised": "7.0.0",
     "jsdoc-to-markdown": "^4.0.1",
+    "md5": "^2.2.1",
     "mocha": "^3.2.0",
     "sinon": "^4.0.1",
     "standard": "^11.0.1"

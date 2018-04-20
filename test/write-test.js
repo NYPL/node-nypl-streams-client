@@ -2,15 +2,18 @@
 
 const AWS = require('aws-sdk-mock')
 const assert = require('assert')
+
+const fixtures = require('./fixtures')
 const Client = require('../index')
 
 describe('Client', function () {
-  const CLIENT_OPTS = { nyplDataApiClientBase: 'https://api.nypltech.org/api/v0.1/' }
-
   // We have to ask for extra running time here because we test rate limits
   this.timeout(30000)
 
   before(() => {
+    // Enable data-api fixtures:
+    fixtures.enableFixtures()
+
     // Mock AWS.Kinesis.prototype.putRecords
     AWS.mock('Kinesis', 'putRecords', function (params, callback) {
       callback(null, { FailedRecordCount: 0, Records: Array(params.Records.length) })
@@ -22,6 +25,9 @@ describe('Client', function () {
   })
 
   after(() => {
+    // Disable data-api fixtures:
+    fixtures.disableFixtures()
+
     AWS.restore('Kinesis')
   })
 
@@ -33,7 +39,7 @@ describe('Client', function () {
     }
 
     it('should write single record to stream', function () {
-      var client = new Client(CLIENT_OPTS)
+      var client = new Client()
 
       return client.write('fake-stream-name', data, { avroSchemaName: 'IndexDocumentProcessed' }).then((resp) => {
         // By virtue of resolving, we know the creation was successful
@@ -42,7 +48,7 @@ describe('Client', function () {
     })
 
     it('should write multiple records to stream', function () {
-      var client = new Client(CLIENT_OPTS)
+      var client = new Client()
 
       var num = 501
       var multiple = Array.apply(undefined, { length: num }).map(() => data)
@@ -56,7 +62,7 @@ describe('Client', function () {
     it('should write multiple records, respecting rate limit', function () {
       var recordsPerSecond = 100
       // Add reduced recordsPerSecond to client config:
-      var client = new Client(Object.assign({ recordsPerSecond }, CLIENT_OPTS))
+      var client = new Client(Object.assign({ recordsPerSecond }))
 
       var num = 501
       var multiple = Array.apply(undefined, { length: num }).map(() => data)

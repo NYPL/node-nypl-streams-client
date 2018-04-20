@@ -1,0 +1,35 @@
+{
+  "statusCode": 404,
+  "type": "exception",
+  "message": "No record found",
+  "error": {
+    "type": "NYPL\\Starter\\APIException",
+    "code": 0,
+    "message": "No record found",
+    "file": "/var/task/vendor/nypl/microservice-starter/src/Model/ModelTrait/DBReadTrait.php",
+    "line": 44,
+    "trace": [
+      "#0 /var/task/vendor/nypl/microservice-starter/src/Model/ModelTrait/DBReadTrait.php(245): NYPL\\Services\\Model\\DataModel\\BaseSchema\\Schema->setSingle(false)",
+      "#1 /var/task/vendor/nypl/microservice-starter/src/Controller.php(283): NYPL\\Services\\Model\\DataModel\\BaseSchema\\Schema->read()",
+      "#2 /var/task/src/Controller/SchemaController.php(397): NYPL\\Starter\\Controller->getDefaultReadResponse(Object(NYPL\\Services\\Model\\DataModel\\BaseSchema\\Schema), Object(NYPL\\Services\\Model\\Response\\SuccessResponse\\SchemasResponse))",
+      "#3 /var/task/index.php(44): NYPL\\Services\\Controller\\SchemaController->getCurrentSchema('IndexLaLaLa')",
+      "#4 [internal function]: Closure->{closure}(Object(Slim\\Http\\Request), Object(Slim\\Http\\Response), Array)",
+      "#5 /var/task/vendor/slim/slim/Slim/Handlers/Strategies/RequestResponse.php(41): call_user_func(Object(Closure), Object(Slim\\Http\\Request), Object(Slim\\Http\\Response), Array)",
+      "#6 /var/task/vendor/slim/slim/Slim/Route.php(325): Slim\\Handlers\\Strategies\\RequestResponse->__invoke(Object(Closure), Object(Slim\\Http\\Request), Object(Slim\\Http\\Response), Array)",
+      "#7 /var/task/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(116): Slim\\Route->__invoke(Object(Slim\\Http\\Request), Object(Slim\\Http\\Response))",
+      "#8 /var/task/vendor/slim/slim/Slim/Route.php(297): Slim\\Route->callMiddlewareStack(Object(Slim\\Http\\Request), Object(Slim\\Http\\Response))",
+      "#9 /var/task/vendor/slim/slim/Slim/App.php(443): Slim\\Route->run(Object(Slim\\Http\\Request), Object(Slim\\Http\\Response))",
+      "#10 /var/task/vendor/nypl/microservice-starter/src/Service.php(60): Slim\\App->__invoke(Object(Slim\\Http\\Request), Object(Slim\\Http\\Response))",
+      "#11 [internal function]: NYPL\\Starter\\Service->NYPL\\Starter\\{closure}(Object(Slim\\Http\\Request), Object(Slim\\Http\\Response), Object(NYPL\\Starter\\Service))",
+      "#12 /var/task/vendor/slim/slim/Slim/DeferredCallable.php(43): call_user_func_array(Object(Closure), Array)",
+      "#13 [internal function]: Slim\\DeferredCallable->__invoke(Object(Slim\\Http\\Request), Object(Slim\\Http\\Response), Object(NYPL\\Starter\\Service))",
+      "#14 /var/task/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(67): call_user_func(Object(Slim\\DeferredCallable), Object(Slim\\Http\\Request), Object(Slim\\Http\\Response), Object(NYPL\\Starter\\Service))",
+      "#15 /var/task/vendor/slim/slim/Slim/MiddlewareAwareTrait.php(116): Slim\\App->Slim\\{closure}(Object(Slim\\Http\\Request), Object(Slim\\Http\\Response))",
+      "#16 /var/task/vendor/slim/slim/Slim/App.php(337): Slim\\App->callMiddlewareStack(Object(Slim\\Http\\Request), Object(Slim\\Http\\Response))",
+      "#17 /var/task/vendor/slim/slim/Slim/App.php(298): Slim\\App->process(Object(Slim\\Http\\Request), Object(Slim\\Http\\Response))",
+      "#18 /var/task/index.php(47): Slim\\App->run()",
+      "#19 {main}"
+    ]
+  },
+  "debugInfo": []
+}

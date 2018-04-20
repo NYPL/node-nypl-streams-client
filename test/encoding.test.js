@@ -1,12 +1,15 @@
-/* global describe it before after */
-
 const AWS = require('aws-sdk-mock')
 const assert = require('assert')
+
+const fixtures = require('./fixtures')
 const Client = require('../index')
 
 describe('Client', function () {
   describe('Stream encoding', function () {
     before(() => {
+      // Enable api client fixtures
+      fixtures.enableFixtures()
+
       // Mock AWS.Kinesis.prototype.putRecords
       AWS.mock('Kinesis', 'putRecords', function (params, callback) {
         callback(null, 'All records have totally been put')
@@ -18,11 +21,14 @@ describe('Client', function () {
     })
 
     after(() => {
+      // Disable api client fixtures
+      fixtures.disableFixtures()
+
       AWS.restore('Kinesis')
     })
 
     it('should fail if single record fails to encode', function () {
-      var client = new Client({ nyplDataApiClientBase: 'https://api.nypltech.org/api/v0.1/' })
+      var client = new Client()
 
       var data = {
         id: '12000000',
@@ -39,7 +45,7 @@ describe('Client', function () {
     })
 
     it('should fail all if single record in batch fails to encode', function () {
-      var client = new Client({ nyplDataApiClientBase: 'https://api.nypltech.org/api/v0.1/' })
+      var client = new Client()
 
       var data = {
         id: '12000000',

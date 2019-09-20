@@ -21,13 +21,13 @@ function setProfile (profile) {
   aws.config.update(awsSecurity)
 }
 
-function writeToStream(streamName, data) {
+function writeToStream (streamName, data) {
   // Schema name is the stream name minus the env suffix:
-  schemaName = argv.schemaName || streamName.replace(/-.*/, '')
+  const schemaName = argv.schemaName || streamName.replace(/-.*/, '')
 
   data = JSON.parse(data)
 
-  client.write (streamName, data, { avroSchemaName: schemaName })
+  client.write(streamName, data, { avroSchemaName: schemaName })
 }
 
 dotenv.config({ path: argv.envfile })

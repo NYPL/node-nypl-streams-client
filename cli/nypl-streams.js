@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-/***
+/**
  *
  *  Usage:
  *
@@ -53,6 +53,9 @@ setProfile(argv.profile)
 const client = new Client({ nyplDataApiClientBase: process.env.NYPL_API_BASE_URL })
 
 switch (argv._[0]) {
-  case 'write': writeToStream(argv._[1], argv._[2])
-  default: console.log(`Don't understand arguments: ${argv._.join(', ')}`)
+  case 'write':
+    writeToStream(argv._[1], argv._[2])
+    break
+  default:
+    console.log(`Don't understand arguments: ${argv._.join(', ')}`)
 }

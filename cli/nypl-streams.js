@@ -1,5 +1,16 @@
 #!/usr/bin/env node
 
+/***
+ *
+ *  Usage:
+ *
+ *  ./cli/nypl-streams.js --envfile ENVFILE --profile PROFILE [--schemaName SCHEMANAME] write STREAMNAME JSON
+ *
+ *  E.g., to emulate what happens when a SierraBibIdPoller places an id in the SierraBibRetriever stream:
+ *
+ *  ./cli/nypl-streams.js --envfile ./config/qa.env --profile nypl-digital-dev --schemaName SierraBibRetrievalRequest write SierraBibRetriever-qa '{ "id": "21445503" }'
+ */
+
 const dotenv = require('dotenv')
 const aws = require('aws-sdk')
 
@@ -28,6 +39,11 @@ function writeToStream (streamName, data) {
   data = JSON.parse(data)
 
   client.write(streamName, data, { avroSchemaName: schemaName })
+    .then((resp) => {
+      console.log(`Wrote record to ${streamName}`)
+    }).catch((e) => {
+      console.log(`Encountered error: ${e}`)
+    })
 }
 
 dotenv.config({ path: argv.envfile })
@@ -38,4 +54,5 @@ const client = new Client({ nyplDataApiClientBase: process.env.NYPL_API_BASE_URL
 
 switch (argv._[0]) {
   case 'write': writeToStream(argv._[1], argv._[2])
+  default: console.log(`Don't understand arguments: ${argv._.join(', ')}`)
 }

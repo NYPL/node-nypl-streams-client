@@ -1,0 +1,26 @@
+{
+  "data": {
+    "id": 274,
+    "offsetBegin": 0,
+    "offsetEnd": 0,
+    "schemaObject": {
+      "fields": [
+        {
+          "name": "uri",
+          "type": "string"
+        },
+        {
+          "name": "type",
+          "type": "string"
+        }
+      ],
+      "name": "IndexDocument",
+      "type": "record"
+    },
+    "stream": "IndexDocument",
+    "schema": "{\"fields\":[{\"name\":\"uri\",\"type\":\"string\"},{\"name\":\"type\",\"type\":\"string\"}],\"name\":\"IndexDocument\",\"type\":\"record\"}"
+  },
+  "count": 1,
+  "statusCode": 200,
+  "debugInfo": []
+}

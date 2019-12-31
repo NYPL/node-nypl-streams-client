@@ -1,28 +1,34 @@
 /* global describe it before after */
 
+const AWS = require('aws-sdk-mock')
 const assert = require('assert')
+
+const fixtures = require('./fixtures')
 const Client = require('../index')
 
 describe('Client', function () {
-  const TEMP_STREAM_NAME = 'node-nypl-streams-client-test-14948860293950.8801324877422303'
-  const CLIENT_OPTS = { nyplDataApiClientBase: 'https://api.nypltech.org/api/v0.1/' }
-
+  // We have to ask for extra running time here because we test rate limits
   this.timeout(30000)
 
   before(() => {
-    // Create the temporary stream:
-    var client = new Client(CLIENT_OPTS)
-    return client.createStream(TEMP_STREAM_NAME)
+    // Enable data-api fixtures:
+    fixtures.enableFixtures()
+
+    // Mock AWS.Kinesis.prototype.putRecords
+    AWS.mock('Kinesis', 'putRecords', function (params, callback) {
+      callback(null, { FailedRecordCount: 0, Records: Array(params.Records.length) })
+    })
+    // Mock AWS.Kinesis.prototype.putRecord (singular)
+    AWS.mock('Kinesis', 'putRecord', function (params, callback) {
+      callback(null, 'That record, it is now put')
+    })
   })
 
   after(() => {
-    // If running tests a lot, consider setting PERSIST_TESTING_STREAMS=true
-    // so that you don't have to re-create the temporary stream each run:
-    if (process.env.PERSIST_TESTING_STREAMS) return Promise.resolve()
+    // Disable data-api fixtures:
+    fixtures.disableFixtures()
 
-    // Delete the temporary stream:
-    var client = new Client(CLIENT_OPTS)
-    return client.deleteStream(TEMP_STREAM_NAME, { yesIKnowThisIsPotentiallyDisastrous: true })
+    AWS.restore('Kinesis')
   })
 
   describe('Stream write', function () {
@@ -33,22 +39,20 @@ describe('Client', function () {
     }
 
     it('should write single record to stream', function () {
-      var client = new Client(CLIENT_OPTS)
+      var client = new Client()
 
-      return client.write(TEMP_STREAM_NAME, data, { avroSchemaName: 'IndexDocumentProcessed' }).then((resp) => {
+      return client.write('fake-stream-name', data, { avroSchemaName: 'IndexDocumentProcessed' }).then((resp) => {
         // By virtue of resolving, we know the creation was successful
         assert(true)
       })
     })
 
     it('should write multiple records to stream', function () {
-      var client = new Client(CLIENT_OPTS)
+      var client = new Client()
 
       var num = 501
       var multiple = Array.apply(undefined, { length: num }).map(() => data)
-      return client.write(TEMP_STREAM_NAME, multiple, { avroSchemaName: 'IndexDocumentProcessed' }).then((resp) => {
-        // console.log('resp: ', resp)
-
+      return client.write('fake-stream-name', multiple, { avroSchemaName: 'IndexDocumentProcessed' }).then((resp) => {
         assert(resp)
         assert.equal(resp.FailedRecordCount, 0)
         assert.equal(resp.Records.length, num)
@@ -58,7 +62,7 @@ describe('Client', function () {
     it('should write multiple records, respecting rate limit', function () {
       var recordsPerSecond = 100
       // Add reduced recordsPerSecond to client config:
-      var client = new Client(Object.assign({ recordsPerSecond }, CLIENT_OPTS))
+      var client = new Client(Object.assign({ recordsPerSecond }))
 
       var num = 501
       var multiple = Array.apply(undefined, { length: num }).map(() => data)
@@ -67,13 +71,12 @@ describe('Client', function () {
       var expectedTime = Math.floor(num / recordsPerSecond) * 1000
 
       var start = (new Date()).getTime()
-      return client.write(TEMP_STREAM_NAME, multiple, { avroSchemaName: 'IndexDocumentProcessed' }).then((resp) => {
-        // console.log('resp: ', resp)
-
+      return client.write('fake-stream-name', multiple, { avroSchemaName: 'IndexDocumentProcessed' }).then((resp) => {
         assert(resp)
         assert.equal(resp.FailedRecordCount, 0)
         assert.equal(resp.Records.length, num)
 
+        // Make sure ellapsed time reflects rate limit
         var ellapsed = (new Date()).getTime() - start
         assert(ellapsed > expectedTime)
       })

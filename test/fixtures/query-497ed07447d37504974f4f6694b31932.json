@@ -1,0 +1,36 @@
+{
+  "data": {
+    "id": 275,
+    "offsetBegin": 0,
+    "offsetEnd": 0,
+    "schemaObject": {
+      "name": "IndexDocumentProcessed",
+      "type": "record",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "name": "nyplSource",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        {
+          "name": "nyplType",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      ]
+    },
+    "stream": "IndexDocumentProcessed",
+    "schema": "{\"name\":\"IndexDocumentProcessed\",\"type\":\"record\",\"fields\":[{\"name\":\"id\",\"type\":\"string\"},{\"name\":\"nyplSource\",\"type\":[\"string\",\"null\"]},{\"name\":\"nyplType\",\"type\":[\"string\",\"null\"]}]}"
+  },
+  "count": 1,
+  "statusCode": 200,
+  "debugInfo": []
+}

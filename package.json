@@ -5,21 +5,27 @@
   "main": "index.js",
   "scripts": {
     "unit-test": "./node_modules/.bin/mocha --reporter spec",
-    "test": "standard && npm run unit-test"
+    "test": "./node_modules/.bin/standard --env mocha && npm run unit-test",
+    "build-jsdoc": "./node_modules/.bin/jsdoc2md lib/client.js > docs/usage.md"
   },
   "author": "@nonword",
   "license": "ISC",
   "dependencies": {
-    "@nypl/nypl-data-api-client": "^0.1.1",
+    "@nypl/nypl-data-api-client": "^1.0.0",
     "avsc": "^5.0.2",
     "aws-sdk": "^2.50.0",
     "loglevel": "^1.4.1",
     "minimist": "^1.2.0"
   },
   "devDependencies": {
+    "aws-sdk-mock": "^1.7.0",
     "chai": "4.0.2",
     "chai-as-promised": "7.0.0",
-    "mocha": "3.2.0"
+    "jsdoc-to-markdown": "^4.0.1",
+    "md5": "^2.2.1",
+    "mocha": "^3.2.0",
+    "sinon": "^4.0.1",
+    "standard": "^11.0.1"
   },
   "directories": {
     "test": "test"

@@ -64,6 +64,15 @@ exports.handler = function (event, context, callback) {
 }
 ```
 
+## CLI
+
+The library includes a CLI for writing arbitary events to streams. Care should be taken to construct events that confirm to the relevant schema.
+
+For example, to write a `SierraBibRetrievalRequest` encoded event to the `SierraBibRetriever-qa` stream:
+```
+cli/nypl-streams.js --envfile config/qa.env --profile nypl-digital-dev write SierraBibRetriever-qa --schemaName SierraBibRetrievalRequest '{ "id": "21747246" }'
+```
+
 ## Git workflow
 
  - Cut feature branch from master.

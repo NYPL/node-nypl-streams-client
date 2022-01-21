@@ -94,8 +94,9 @@ describe('Client', function () {
 
       return client.write('StreamWithPoorConnectivity', multiple, { avroSchemaName: 'IndexDocumentProcessed' }).then((resp) => {
         assert(resp)
-        // This stream emulates 2 failed writes per putRecords call, so we
-        // expect 6 writes, and 6 failures
+        // This stream emulates 1 failed write per putRecords call, and we
+        // expect 501/100=6 batches, so we expect 6 putRecords calls and as
+        // many failures
         assert.equal(resp.FailedRecordCount, 6)
         assert.equal(resp.Records.length, num)
         assert.equal(resp.unmergedResponses.length, 6)

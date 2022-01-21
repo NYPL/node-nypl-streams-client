@@ -16,7 +16,11 @@ describe('Client', function () {
 
     // Mock AWS.Kinesis.prototype.putRecords
     AWS.mock('Kinesis', 'putRecords', function (params, callback) {
-      callback(null, { FailedRecordCount: 0, Records: Array(params.Records.length) })
+      if (params.StreamName === 'StreamWithPoorConnectivity') {
+        callback(null, { FailedRecordCount: 1, Records: Array(params.Records.length) })
+      } else {
+        callback(null, { FailedRecordCount: 0, Records: Array(params.Records.length) })
+      }
     })
     // Mock AWS.Kinesis.prototype.putRecord (singular)
     AWS.mock('Kinesis', 'putRecord', function (params, callback) {
@@ -79,6 +83,23 @@ describe('Client', function () {
         // Make sure ellapsed time reflects rate limit
         var ellapsed = (new Date()).getTime() - start
         assert(ellapsed > expectedTime)
+      })
+    })
+
+    it('should return an object with FailedRecordCount representing all failures across multiple batches', function () {
+      const client = new Client(Object.assign({ writeBatchSize: 100 }))
+
+      var num = 501
+      var multiple = Array.apply(undefined, { length: num }).map(() => data)
+
+      return client.write('StreamWithPoorConnectivity', multiple, { avroSchemaName: 'IndexDocumentProcessed' }).then((resp) => {
+        assert(resp)
+        // This stream emulates 1 failed write per putRecords call, and we
+        // expect 501/100=6 batches, so we expect 6 putRecords calls and as
+        // many failures
+        assert.equal(resp.FailedRecordCount, 6)
+        assert.equal(resp.Records.length, num)
+        assert.equal(resp.unmergedResponses.length, 6)
       })
     })
   })

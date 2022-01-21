@@ -36,6 +36,7 @@ var options = {
 }
 streamsClient.write('MyStream', records, options).then((resp) => {
   console.log('Finished writing to stream ' + resp.Records.length)
+  console.log(`Failed to write: ${resp.FailedRecordCount} record(s)`)
 }).catch((e) => console.error('Error writing to stream: ', e))
 ```
 

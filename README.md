@@ -74,6 +74,11 @@ For example, to write a `SierraBibRetrievalRequest` encoded event to the `Sierra
 cli/nypl-streams.js --envfile config/qa.env --profile nypl-digital-dev write SierraBibRetriever-qa --schemaName SierraBibRetrievalRequest '{ "id": "21747246" }'
 ```
 
+Or, to process a whole CSV:
+```
+cli/nypl-streams.js --envfile config/qa.env --profile nypl-digital-dev write-bulk IndexDocument-qa --schemaName IndexDocument input.csv '{ "uri": "{{0}}", "type": "record" }'
+```
+
 ## Git workflow
 
  - Cut feature branch from master.

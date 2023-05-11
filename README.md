@@ -79,8 +79,23 @@ cli/nypl-streams.js --envfile config/qa.env --profile nypl-digital-dev write Sie
  - Cut feature branch from master.
  - Create PR to merge feature branch into master
  - After PR approved by multiple co-workers, the author merges the PR.
- - Tag master with an appropriate version bump and publish to NPMJS (See https://github.com/NYPL/engineering-general/blob/master/standards/versioning.md#npm-versioning )
 
+### Publishing to NPMJS
+
+Once the PR has been approved and merged, check out the target branch locally and:
+
+1. Bump the version:
+
+ - Bump the version number in `package.json`
+ - Run `nvm use; npm i` to update `package-lock.json`
+ - Commit changes
+ - Git tag it (e.g. `git tag -a v2.1.1`)
+ - Push changes to origin (including tags via `git push --tags`)
+
+2. Publish changes to NPMJS:
+
+ - Run npm publish --dry-run to verify nothing is being packaged that should not be!
+ - `npm publish`
 
 ## Testing
 

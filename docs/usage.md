@@ -18,6 +18,8 @@
 <dl>
 <dt><a href="#ClientConstructorOptions">ClientConstructorOptions</a> : <code>Object</code></dt>
 <dd></dd>
+<dt><a href="#AwsClientOptions">AwsClientOptions</a> : <code>Object</code></dt>
+<dd></dd>
 <dt><a href="#WriteOptions">WriteOptions</a> : <code>Object</code></dt>
 <dd></dd>
 <dt><a href="#WriteResponse">WriteResponse</a> : <code>Object</code></dt>
@@ -148,7 +150,18 @@ A AvroValidationError is thrown when avsc fails to encode/decode data.
 | waitBetweenDescribeCallsInSeconds | <code>number</code> | How many seconds to    pause between describe calls (i.e. when waiting for active stream).    Default 4 |
 | maxDescribeCallRetries | <code>number</code> | Maximum describe calls to make    before giving up (i.e. when waiting for active stream). Default 10. |
 | logLevel | <code>string</code> | Set [log level](https://github.com/pimterry/loglevel)    (i.e. info, error, warn, debug). Default env.LOG_LEVEL or 'error' |
-| awsRegion | <code>string</code> | AWS region to use. Default us-east-1 |
+| awsClientOptions | [<code>AwsClientOptions</code>](#AwsClientOptions) | AWS client options |
+
+<a name="AwsClientOptions"></a>
+
+## AwsClientOptions : <code>Object</code>
+**Kind**: global typedef  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| region | <code>string</code> | AWS region to use. Default us-east-1 |
+| profile | <code>string</code> | Named profile to use for from local credentials file. |
 
 <a name="WriteOptions"></a>
 

@@ -24,11 +24,12 @@ See [docs/usage.md](docs/usage.md) for complete documentation of Client methods 
 To write a single record to a stream (encoded to "MyStream" schema):
 
 ```js
-streamsClient.write('MyStream', { id: 'id1', field1: 1, field2: 2 })
-  .then((resp) => {
-    console.log('Finished writing to stream ' + resp.Records.length)
-  })
-  .catch((e) => console.error('Error writing to stream: ', e))
+try {
+  const response = await streamsClient.write('MyStream', { id: 'id1', field1: 1, field2: 2 })
+  console.log('Finished writing to stream ' + response.Records.length)
+} catch (e) {
+  console.error('Error writing to stream: ', e)
+}
 ```
 
 To write multiple records to a stream, batched and rate-limited to avoid write errors:
@@ -38,12 +39,13 @@ const records = [ { id: 'id1', field1: 1, field2: 2 }, { id: 'id2', field1: 1 },
 const options = {
   recordsPerSecond: 500 // This is the default and well below the 1000/s AWS constraint
 }
-streamsClient.write('MyStream', records, options)
-  .then((resp) => {
-    console.log('Finished writing to stream ' + resp.Records.length)
-    console.log(`Failed to write: ${resp.FailedRecordCount} record(s)`)
-  })
-  .catch((e) => console.error('Error writing to stream: ', e))
+try {
+  const response = await streamsClient.write('MyStream', records, options)
+  console.log('Finished writing to stream ' + resp.Records.length)
+  console.log(`Failed to write: ${resp.FailedRecordCount} record(s)`)
+} catch (e) {
+  console.error('Error writing to stream: ', e)
+}
 ```
 
 Above will resolve after `records.length / 500` seconds. The resolved value is a hash merged from the hashes returned from each putRecords call.

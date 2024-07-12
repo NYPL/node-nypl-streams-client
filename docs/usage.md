@@ -5,18 +5,24 @@
 <dd></dd>
 </dl>
 
+## Functions
+
+<dl>
+<dt><a href="#AvroValidationError">AvroValidationError()</a></dt>
+<dd><p>A AvroValidationError is thrown when avsc fails to encode/decode data.</p>
+</dd>
+</dl>
+
 ## Typedefs
 
 <dl>
 <dt><a href="#ClientConstructorOptions">ClientConstructorOptions</a> : <code>Object</code></dt>
 <dd></dd>
+<dt><a href="#AwsClientOptions">AwsClientOptions</a> : <code>Object</code></dt>
+<dd></dd>
 <dt><a href="#WriteOptions">WriteOptions</a> : <code>Object</code></dt>
 <dd></dd>
 <dt><a href="#WriteResponse">WriteResponse</a> : <code>Object</code></dt>
-<dd></dd>
-<dt><a href="#CreateStreamOptions">CreateStreamOptions</a> : <code>Object</code></dt>
-<dd></dd>
-<dt><a href="#DeleteStreamOptions">DeleteStreamOptions</a> : <code>Object</code></dt>
 <dd></dd>
 </dl>
 
@@ -28,14 +34,13 @@
 * [Client](#Client)
     * [new Client(options)](#new_Client_new)
     * [.write(streamName, data, options)](#Client+write) ⇒ <code>Promise.&lt;WriteReponse&gt;</code>
-    * [.createStream(name, options)](#Client+createStream) ⇒ <code>Promise</code>
-    * [.deleteStream(name, options)](#Client+deleteStream) ⇒ <code>Promise</code>
     * [.kinesisClient()](#Client+kinesisClient) ⇒ <code>Promise.&lt;AWS.Kinesis&gt;</code>
     * [.dataApiClient()](#Client+dataApiClient) ⇒ <code>Promise.&lt;NyplClient&gt;</code>
     * [.encodeData(schemaName, data)](#Client+encodeData) ⇒ <code>Promise</code>
     * [.decodeData(schemaName, data)](#Client+decodeData) ⇒ <code>Promise</code>
     * [.decodeAvroBufferString(bufferString, avroObject, encodeType)](#Client+decodeAvroBufferString) ⇒
     * [.getAvroType()](#Client+getAvroType) ⇒ <code>Promise.&lt;avsc.Type&gt;</code>
+    * [._defaultSchema()](#Client+_defaultSchema)
 
 <a name="new_Client_new"></a>
 
@@ -60,32 +65,6 @@ Note, the `data` arg can be an object or array of objects.
 | streamName | <code>string</code> | Name of stream to write to. |
 | data | <code>Object</code> \| <code>Array</code> | Object (or array of objects) to write. |
 | options | [<code>WriteOptions</code>](#WriteOptions) |  |
-
-<a name="Client+createStream"></a>
-
-### client.createStream(name, options) ⇒ <code>Promise</code>
-Create a stream by name
-
-**Kind**: instance method of [<code>Client</code>](#Client)  
-**Returns**: <code>Promise</code> - A promise that resolves on success.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| name | <code>string</code> | Name of stream |
-| options | [<code>CreateStreamOptions</code>](#CreateStreamOptions) |  |
-
-<a name="Client+deleteStream"></a>
-
-### client.deleteStream(name, options) ⇒ <code>Promise</code>
-Delete a stream by name
-
-**Kind**: instance method of [<code>Client</code>](#Client)  
-**Returns**: <code>Promise</code> - A promise that resolves on success.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| name | <code>string</code> | Name of stream |
-| options | <code>CreateOptions</code> |  |
 
 <a name="Client+kinesisClient"></a>
 
@@ -145,6 +124,18 @@ Returns an avro type instance by schema name
 
 **Kind**: instance method of [<code>Client</code>](#Client)  
 **Returns**: <code>Promise.&lt;avsc.Type&gt;</code> - A Promise that resolves an avsc.Type instance  
+<a name="Client+_defaultSchema"></a>
+
+### client.\_defaultSchema()
+Given a stream name (e.g. MyEventStream-qa) returns the conventional schema name (MyEventStream)
+
+**Kind**: instance method of [<code>Client</code>](#Client)  
+<a name="AvroValidationError"></a>
+
+## AvroValidationError()
+A AvroValidationError is thrown when avsc fails to encode/decode data.
+
+**Kind**: global function  
 <a name="ClientConstructorOptions"></a>
 
 ## ClientConstructorOptions : <code>Object</code>
@@ -159,7 +150,18 @@ Returns an avro type instance by schema name
 | waitBetweenDescribeCallsInSeconds | <code>number</code> | How many seconds to    pause between describe calls (i.e. when waiting for active stream).    Default 4 |
 | maxDescribeCallRetries | <code>number</code> | Maximum describe calls to make    before giving up (i.e. when waiting for active stream). Default 10. |
 | logLevel | <code>string</code> | Set [log level](https://github.com/pimterry/loglevel)    (i.e. info, error, warn, debug). Default env.LOG_LEVEL or 'error' |
-| awsRegion | <code>string</code> | AWS region to use. Default us-east-1 |
+| awsClientOptions | [<code>AwsClientOptions</code>](#AwsClientOptions) | AWS client options |
+
+<a name="AwsClientOptions"></a>
+
+## AwsClientOptions : <code>Object</code>
+**Kind**: global typedef  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| region | <code>string</code> | AWS region to use. Default us-east-1 |
+| profile | <code>string</code> | Named profile to use for from local credentials file. |
 
 <a name="WriteOptions"></a>
 
@@ -170,7 +172,7 @@ Returns an avro type instance by schema name
 | Name | Type | Description |
 | --- | --- | --- |
 | avroEncode | <code>boolean</code> | Whether or not to Name of avro schema to use to encode. |
-| avroSchemaName | <code>string</code> | Name of avro schema to use to encode.     Defaults to `streamName`. |
+| avroSchemaName | <code>string</code> | Name of avro schema to use to encode.     Defaults to `streamName` (with -qa/-production suffix removed). |
 
 <a name="WriteResponse"></a>
 
@@ -183,25 +185,4 @@ Returns an avro type instance by schema name
 | Records | <code>Array</code> | Array of records written |
 | FailedRecordCount | <code>number</code> | Number of records that failed |
 | unmergedResponses | <code>Array</code> | Raw AWS responses (for debugging     mult. batch jobs) |
-
-<a name="CreateStreamOptions"></a>
-
-## CreateStreamOptions : <code>Object</code>
-**Kind**: global typedef  
-**Properties**
-
-| Name | Type | Default | Description |
-| --- | --- | --- | --- |
-| shards | <code>number</code> | <code>1</code> | Number of shards to attach to stream |
-| failIfExists | <code>boolean</code> | <code>false</code> | Whether to throw error if stream     already exists. |
-
-<a name="DeleteStreamOptions"></a>
-
-## DeleteStreamOptions : <code>Object</code>
-**Kind**: global typedef  
-**Properties**
-
-| Name | Type | Default | Description |
-| --- | --- | --- | --- |
-| yesIKnowThisIsPotentiallyDisastrous | <code>boolean</code> | <code>false</code> | Flag that     must be set to true to allow call to succeed. |
 

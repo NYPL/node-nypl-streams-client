@@ -1,4 +1,5 @@
-const AWS = require('aws-sdk-mock')
+const sinon = require('sinon')
+const { KinesisClient } = require('@aws-sdk/client-kinesis')
 const assert = require('assert')
 
 const fixtures = require('./fixtures')
@@ -10,13 +11,8 @@ describe('Client', function () {
       // Enable api client fixtures
       fixtures.enableFixtures()
 
-      // Mock AWS.Kinesis.prototype.putRecords
-      AWS.mock('Kinesis', 'putRecords', function (params, callback) {
-        callback(null, 'All records have totally been put')
-      })
-      // Mock AWS.Kinesis.prototype.putRecord (singular)
-      AWS.mock('Kinesis', 'putRecord', function (params, callback) {
-        callback(null, 'That record, it is now put')
+      sinon.stub(KinesisClient.prototype, 'send').callsFake((payload) => {
+        return Promise.resolve({ FailedRecordCount: 0, Records: Array(payload.input.Records.length) })
       })
     })
 
@@ -24,13 +20,13 @@ describe('Client', function () {
       // Disable api client fixtures
       fixtures.disableFixtures()
 
-      AWS.restore('Kinesis')
+      KinesisClient.prototype.send.restore()
     })
 
     it('should fail if single record fails to encode', function () {
-      var client = new Client()
+      const client = new Client()
 
-      var data = {
+      const data = {
         id: '12000000',
         nyplSourceInvalidProp: 'sierra-nypl',
         nyplType: 'bib'
@@ -45,16 +41,16 @@ describe('Client', function () {
     })
 
     it('should fail all if single record in batch fails to encode', function () {
-      var client = new Client()
+      const client = new Client()
 
-      var data = {
+      const data = {
         id: '12000000',
         nyplSource: 'sierra-nypl',
         nyplType: 'bib'
       }
 
-      var num = 5
-      var multiple = Array.apply(undefined, { length: num }).map(() => data)
+      const num = 5
+      const multiple = Array.apply(undefined, { length: num }).map(() => data)
       // Delete a property from fourth record:
       delete multiple[3].nyplType
 

@@ -36,9 +36,7 @@ function requireAwsCredentials () {
 function writeToStream (streamName, dataOrPath) {
   const schemaName = argv.schemaName || streamName.replace(/-.*/, '')
 
-  console.log('loading ...', dataOrPath)
   if (fs.existsSync(dataOrPath)) {
-    console.log(`Loading ${dataOrPath}`)
     dataOrPath = fs.readFileSync(dataOrPath, 'utf8')
   }
 

@@ -74,7 +74,7 @@ function clientSearchViaFixtures (url) {
  * @returns {Promise<boolean>} A promise that resolves a boolean: true if fixture exists, false otherwise.
  */
 function fixtureExists (url) {
-  let path = fixturePath(url)
+  const path = fixturePath(url)
   return new Promise((resolve, reject) => {
     fs.access(path, (err, fd) => {
       const exists = !err
@@ -89,7 +89,7 @@ function fixtureExists (url) {
  *  - writes the given response to a local fixture
  */
 function writeResponseToFixture (url, resp) {
-  let path = fixturePath(url)
+  const path = fixturePath(url)
   return new Promise((resolve, reject) => {
     fs.writeFile(path, JSON.stringify(resp, null, 2), (err, res) => {
       if (err) return reject(err)

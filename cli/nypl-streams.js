@@ -14,30 +14,26 @@ const fs = require('fs')
  */
 
 const dotenv = require('dotenv')
-const aws = require('aws-sdk')
+const { fromIni } = require('@aws-sdk/credential-providers')
 
 const Client = require('../index')
-const argv = require('minimist')(process.argv.slice(2))
+const argv = require('minimist')(process.argv.slice(2), {
+  default: {
+    offset: 0,
+    limit: null,
+    delay: 1000 * 5 // 5s
+  }
+})
 
 if (!argv.envfile) throw new Error('Must specify --envfile; See config/sample.env')
+
+const delay = (howLong) => new Promise((resolve) => setTimeout(resolve, howLong))
 
 function requireAwsCredentials () {
   if (!argv.profile) throw new Error('Must specify --profile')
 }
 
-function setProfile (profile) {
-  // Set aws creds:
-  aws.config.credentials = new aws.SharedIniFileCredentials({
-    profile
-  })
-
-  // Set aws region:
-  let awsSecurity = { region: 'us-east-1' }
-  aws.config.update(awsSecurity)
-}
-
 function writeToStream (streamName, dataOrPath) {
-  // Schema name is the stream name minus the env suffix:
   const schemaName = argv.schemaName || streamName.replace(/-.*/, '')
 
   console.log('loading ...', dataOrPath)
@@ -72,28 +68,34 @@ function decodeData(data) {
 function writeBulkToStream (streamName, file, template, options) {
   options = Object.assign({
     offset: 0,
-    batchSize: 100
+    batchSize: 100,
+    batchDelay: 1000
   }, options)
 
   // Schema name is the stream name minus the env suffix:
   const schemaName = argv.schemaName || streamName.replace(/-.*/, '')
 
-  const records = fs.readFileSync(file, 'utf8')
+  let records = fs.readFileSync(file, 'utf8')
     .split('\n')
     .map((line) => line.split(','))
     .filter((line) => line.length > 0 && (line.length > 1 || line[0]))
 
-  console.log(`Bulk writing ${records.length} records`)
-  _writeBulkToStreamRecurse(streamName, records, template, { offset: options.offset, schemaName })
+  if (options.limit) {
+    records = records.slice(0, options.offset + options.limit)
+  }
+
+  console.log(`Bulk writing ${records.length - options.offset} records${options.limit ? ` (limit ${options.limit})` : ''}`)
+  _writeBulkToStreamRecurse(streamName, records, template, { offset: options.offset, schemaName, batchDelay: options.batchDelay })
 }
 
 function _writeBulkToStreamRecurse (streamName, records, template, options) {
   options = Object.assign({
     offset: 0,
-    batchSize: 100
+    batchSize: 100,
+    batchDelay: 1000
   }, options)
-  if (!options.offset) options.offset = 0
 
+  console.log('Slicing ' + records.length + ' from ' + options.offset + ', to ' + (options.offset + options.batchSize))
   const data = records.slice(options.offset, options.offset + options.batchSize)
     .map((line) => {
       const matches = template.match(/{{\d+}}/)
@@ -107,11 +109,11 @@ function _writeBulkToStreamRecurse (streamName, records, template, options) {
 
   let task = () => client.write(streamName, data, { avroSchemaName: options.schemaName })
   if (argv.dryrun) {
-    console.log('client.write(', streamName, data, { avroSchemaName: options.schemaName })
+    console.log('DRYRUN: client.write(', streamName, data, { avroSchemaName: options.schemaName })
     task = () => Promise.resolve()
   }
   task()
-    .then((resp) => {
+    .then(async (resp) => {
       // Wrote records undefined-NaN of 10 to IndexDocument-qa
 
       console.log(`Wrote records ${options.offset}-${Math.min(records.length, options.offset + options.batchSize)} of ${records.length} to ${streamName}`)
@@ -119,6 +121,8 @@ function _writeBulkToStreamRecurse (streamName, records, template, options) {
       if (options.offset + options.batchSize >= records.length) {
         console.log('All done')
       } else {
+        await delay(options.batchDelay)
+
         options.offset += options.batchSize
         return _writeBulkToStreamRecurse(streamName, records, template, options)
       }
@@ -231,9 +235,10 @@ function encodeEventFile (infile, outfile, options) {
 
 dotenv.config({ path: argv.envfile })
 
-setProfile(argv.profile)
-
-const client = new Client({ nyplDataApiClientBase: process.env.NYPL_API_BASE_URL })
+const client = new Client({
+  nyplDataApiClientBase: process.env.NYPL_API_BASE_URL,
+  awsClientOptions: { credentials: fromIni({ profile: argv.profile }) }
+})
 
 switch (argv._[0]) {
   case 'write':
@@ -242,7 +247,12 @@ switch (argv._[0]) {
     break
   case 'write-bulk':
     requireAwsCredentials()
-    writeBulkToStream(argv._[1], argv._[2], argv._[3], { offset: argv.offset, batchSize: argv.batchSize })
+    writeBulkToStream(argv._[1], argv._[2], argv._[3], {
+      offset: argv.offset,
+      batchSize: argv.batchSize,
+      limit: argv.limit,
+      batchDelay: argv.delay
+    })
     break
   case 'encode-event-file':
     encodeEventFile(argv._[1], argv._[2], { schemaName: argv.schemaName })

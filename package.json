@@ -1,6 +1,6 @@
 {
   "name": "@nypl/nypl-streams-client",
-  "version": "2.0.0",
+  "version": "2.2.0",
   "description": "Internal NYPL client for reading/writing avro encoded streams",
   "main": "index.js",
   "scripts": {

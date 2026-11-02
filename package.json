@@ -14,7 +14,7 @@
     "@aws-sdk/client-kinesis": "^3.1161.0",
     "@aws-sdk/client-kms": "^3.1161.0",
     "@nypl/nypl-data-api-client": "^2.0.0",
-    "avsc": "^5.0.2",
+    "avsc": "^5.7.9",
     "loglevel": "^1.4.1",
     "minimist": "^1.2.0"
   },

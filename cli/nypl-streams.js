@@ -53,7 +53,7 @@ function writeToStream (streamName, dataOrPath) {
     })
 }
 
-function decodeData(data) {
+function decodeData (data) {
   // Schema name is the stream name minus the env suffix:
   const schemaName = argv.schemaName
 
@@ -135,22 +135,22 @@ function eventFileContent (records, streamName) {
   // Encode as firehose event file?
   if (argv.firehose) {
     return {
-      'invocationId': 'invocationIdExample',
-      'deliveryStreamArn': 'arn:aws:kinesis:deliveryStream/CircTransAnon-production',
-      'sourceKinesisStreamArn': `arn:aws:kinesis:us-east-1:946183545209:stream/${streamName}`,
-      'region': 'us-east-1',
-      'records': records.map((record) => {
+      invocationId: 'invocationIdExample',
+      deliveryStreamArn: 'arn:aws:kinesis:deliveryStream/CircTransAnon-production',
+      sourceKinesisStreamArn: `arn:aws:kinesis:us-east-1:946183545209:stream/${streamName}`,
+      region: 'us-east-1',
+      records: records.map((record) => {
         return {
-          'recordId': '49546986683135544286507457936321625675700192471156785154',
-          'approximateArrivalTimestamp': 1495072949453,
-          'kinesisRecordMetadata': {
-            'sequenceNumber': '49545115243490985018280067714973144582180062593244200961',
-            'subsequenceNumber': '123456',
-            'partitionKey': 'partitionKey-03',
-            'shardId': 'shardId-000000000000',
-            'approximateArrivalTimestamp': 1495072949453
+          recordId: '49546986683135544286507457936321625675700192471156785154',
+          approximateArrivalTimestamp: 1495072949453,
+          kinesisRecordMetadata: {
+            sequenceNumber: '49545115243490985018280067714973144582180062593244200961',
+            subsequenceNumber: '123456',
+            partitionKey: 'partitionKey-03',
+            shardId: 'shardId-000000000000',
+            approximateArrivalTimestamp: 1495072949453
           },
-          'data': record
+          data: record
         }
       })
     }
@@ -158,21 +158,21 @@ function eventFileContent (records, streamName) {
 
   // Otherwise, return normal kinesis event:
   return {
-    'Records': records.map((record) => {
+    Records: records.map((record) => {
       return {
-        'kinesis': {
-          'kinesisSchemaVersion': '1.0',
-          'sequenceNumber': '49586053432934900701673372692451976307549532375698374658',
-          'approximateArrivalTimestamp': '2018-09-13T16:39:03.217Z',
-          'data': record,
-          'partitionKey': '5b9a92a72271f'
+        kinesis: {
+          kinesisSchemaVersion: '1.0',
+          sequenceNumber: '49586053432934900701673372692451976307549532375698374658',
+          approximateArrivalTimestamp: '2018-09-13T16:39:03.217Z',
+          data: record,
+          partitionKey: '5b9a92a72271f'
         },
-        'eventSource': 'aws:kinesis',
-        'eventVersion': '1.0',
-        'eventName': 'aws:kinesis:record',
-        'awsRegion': 'us-east-1',
-        'invokeIdentityArn': 'arn:aws:iam::224280085904:role/lambda_basic_execution',
-        'eventSourceARN': `arn:aws:kinesis:us-east-1:224280085904:stream/${streamName}`
+        eventSource: 'aws:kinesis',
+        eventVersion: '1.0',
+        eventName: 'aws:kinesis:record',
+        awsRegion: 'us-east-1',
+        invokeIdentityArn: 'arn:aws:iam::224280085904:role/lambda_basic_execution',
+        eventSourceARN: `arn:aws:kinesis:us-east-1:224280085904:stream/${streamName}`
       }
     })
   }
